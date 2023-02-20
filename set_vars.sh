@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export DIRIGERA_IP=192.168.1.129
+export DIRIGERA_TOKEN=`pass DIRIGERA_TOKEN`

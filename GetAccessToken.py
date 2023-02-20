@@ -4,8 +4,11 @@ import base64
 import random
 import socket
 from urllib3.exceptions import InsecureRequestWarning
+import os
 
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+
+DIRIGERA_IP = os.environ.get("DIRIGERA_IP")
 
 CODE_ALPHABET="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
 CODE_LENGTH = 128
@@ -34,13 +37,19 @@ params = {
     "response_type": "code",
     "code_challenge": createCodeChallenge(codeVerifier),
     "code_challenge_method": "S256"
-}
+    }
 response = requests.get(authUrl, params=params,verify=False);
 code = response.json()['code']
 
 input('Wait for button pressed (actionbutton on Dirigera)...') # Press button on device and press a key in cmd-prompt to "release" code below afterwards
 
-data = str("code=" + code + "&name=" + socket.gethostname() + "&grant_type=" + "authorization_code" + "&code_verifier=" + codeVerifier)
+#data = {str("code=" + code + "&name=" + socket.gethostname() + "&grant_type=" + "authorization_code" + "&code_verifier=" + codeVerifier)
+data = { 
+    'code': code,
+    'name': socket.gethostname(),
+    'grant_type': "authorization_code",
+    'code_verifier': codeVerifier
+    }
 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 response = requests.post(tokenUrl, headers=headers, data=data, verify=False)
 print(response.json()['access_token'])
